@@ -18,16 +18,16 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request){
 		hasMx, hasSPF, hasDMARC := utils.VerifyEmail(email)
 		fmt.Println(hasMx,hasSPF,hasDMARC,email)
 
-		if hasMx  {
 			validMail := models.VerificatopnResponse{
 				HasMX: hasMx,
 				HasSPF: hasSPF,
 				HasDMARC: hasDMARC,
 				Email: email,
+				IsValid: hasMx,
 				
 			}
 			validEmails = append(validEmails, validMail)
-		}
+		
 
 
 	}
@@ -35,7 +35,7 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request){
 	responseData := models.ResponseData{
 		Data : validEmails,
 	}
-	
+
 	json.NewEncoder(w).Encode(responseData)
 	w.WriteHeader(http.StatusOK)
 }
