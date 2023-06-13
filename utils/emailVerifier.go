@@ -7,9 +7,11 @@ import (
 ) 
 
 
-func VerifyEmail(domain string) (bool, bool, bool){
+func VerifyEmail(email string) (bool, bool, bool){
 	var hasMX, hasSPF, hasDMARC  bool = false, false, false
 	var spfRecord, dmarcRecord string
+
+	domain := strings.Split(email,"@")[1]
 
 	mxRecord, err := net.LookupMX(domain)
 
@@ -55,4 +57,8 @@ func VerifyEmail(domain string) (bool, bool, bool){
 	fmt.Printf("%v, %v, %v, %v, %v,",hasMX,hasSPF,spfRecord,hasDMARC,dmarcRecord)
 
 	return hasMX, hasSPF, hasDMARC
+}
+
+func ValidateEmail(){
+	
 }

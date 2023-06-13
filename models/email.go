@@ -9,6 +9,7 @@ type VerificatopnResponse struct {
 	HasDMARC bool `json:"hasDMARC"`
 	HasSPF   bool `json:"hasSpf"`
 	Email string `json:"email"`
+	
 }
 
 type ResponseData struct {
