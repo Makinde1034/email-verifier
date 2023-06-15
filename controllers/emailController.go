@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"github.com/Makinde1034/email-verifier/models"
-	"github.com/Makinde1034/email-verifier/utils"                      
+	"github.com/Makinde1034/email-verifier/utils"
 ) 
 
 func VerifyEmail(w http.ResponseWriter, r *http.Request){
@@ -14,9 +15,15 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request){
 	validEmails := []models.VerificatopnResponse{}
 	json.NewDecoder(r.Body).Decode(&request)
 
+	wg := &sync.WaitGroup{}
+
 	for _, email := range request.Emails {
-		hasMx, hasSPF, hasDMARC := utils.VerifyEmail(email)
-		fmt.Println(hasMx,hasSPF,hasDMARC,email)
+
+		wg.Add(1)
+		go func(email string) {
+		
+			hasMx, hasSPF, hasDMARC := utils.VerifyEmail(email)
+			fmt.Println(hasMx,hasSPF,hasDMARC,email)
 
 			validMail := models.VerificatopnResponse{
 				HasMX: hasMx,
@@ -27,10 +34,13 @@ func VerifyEmail(w http.ResponseWriter, r *http.Request){
 				
 			}
 			validEmails = append(validEmails, validMail)
+			wg.Done()
+
+		}(email)
 		
 
-
 	}
+	wg.Wait()
 
 	responseData := models.ResponseData{
 		Data : validEmails,
